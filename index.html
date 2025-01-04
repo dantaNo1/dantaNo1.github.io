@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>甜蜜知多少</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="quiz-container">
+        <h1>甜蜜知多少</h1>
+        <div id="question-container"></div>
+        <div id="options-container"></div>
+        <button id="next-button">下一题</button>
+        <div id="score-container"></div>
+    </div>
+    <script>
+        const questions = [
+            {
+                question: "1.内江的别称是什么？",
+                options: ["A.甜城", "B.江城", "C.蓉城", "D.山城"],
+                answer: 0
+            },
+            {
+                question: "2.内江著名的旅游景点是？",
+                options: ["A.张大千纪念馆", "B.九寨沟", "C.峨眉山", "D.都江堰"],
+                answer: 0
+            },
+            {
+                question: "3.内江的特色美食不包括？",
+                options: ["A.兔儿面", "B.钟水饺", "C.板板桥油炸粑", "D.黄老五花生酥"],
+                answer: 1
+            },
+            {
+                question: "4.内江属于哪个省？",
+                options: ["A.四川省", "B.云南省", "C.贵州省", "D.湖南省"],
+                answer: 0
+            },
+            {
+                question: "5.内江的母亲河是？",
+                options: ["A.沱江", "B.长江", "C.黄河", "D.珠江"],
+                answer: 0
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionContainer = document.getElementById("question-container");
+        const optionsContainer = document.getElementById("options-container");
+        const nextButton = document.getElementById("next-button");
+        const scoreContainer = document.getElementById("score-container");
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionContainer.innerText = currentQuestion.question;
+            optionsContainer.innerHTML = "";
+
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.classList.add("option");
+                optionElement.innerText = option;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener("mouseenter", () => optionElement.classList.add("hover"));
+                optionElement.addEventListener("mouseleave", () => optionElement.classList.remove("hover"));
+                optionElement.addEventListener("click", checkAnswer);
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function checkAnswer(event) {
+            const selectedIndex = event.target.dataset.index;
+            const currentQuestion = questions[currentQuestionIndex];
+            const optionElements = optionsContainer.querySelectorAll(".option");
+
+            optionElements.forEach((optionElement, index) => {
+                if (index == selectedIndex) {
+                    optionElement.classList.add(currentQuestion.answer == index ? "correct" : "incorrect");
+                } else {
+                    optionElement.classList.add("disabled");
+                }
+            });
+
+            if (currentQuestion.answer == selectedIndex) {
+                score += 20;
+            }
+
+            nextButton.disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+                nextButton.disabled = true;
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            questionContainer.style.display = "none";
+            optionsContainer.style.display = "none";
+            nextButton.style.display = "none";
+            scoreContainer.innerText = `你的得分是：${score}分`;
+        }
+
+        nextButton.addEventListener("click", nextQuestion);
+        loadQuestion();
+    </script>
+</body>
+
+</html>
